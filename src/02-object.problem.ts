@@ -1,13 +1,15 @@
 // CODE
 
-import { expect, it } from "vitest";
-import { z } from "zod";
+import { expect, it } from 'vitest';
+import { z } from 'zod';
 
-const PersonResult = z.unknown();
-//                   ^ 🕵️‍♂️
+const PersonResult = z.object({
+   // ^?
+  name: z.string(),
+});
 
 export const fetchStarWarsPersonName = async (id: string) => {
-  const data = await fetch("https://swapi.dev/api/people/" + id).then((res) =>
+  const data = await fetch('https://swapi.dev/api/people/' + id).then(res =>
     res.json(),
   );
 
@@ -18,7 +20,7 @@ export const fetchStarWarsPersonName = async (id: string) => {
 
 // TESTS
 
-it("Should return the name", async () => {
-  expect(await fetchStarWarsPersonName("1")).toEqual("Luke Skywalker");
-  expect(await fetchStarWarsPersonName("2")).toEqual("C-3PO");
+it('Should return the name', async () => {
+  expect(await fetchStarWarsPersonName('1')).toEqual('Luke Skywalker');
+  expect(await fetchStarWarsPersonName('2')).toEqual('C-3PO');
 });

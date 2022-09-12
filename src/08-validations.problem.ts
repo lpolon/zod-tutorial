@@ -1,16 +1,35 @@
 // CODE
 
-import { expect, it } from "vitest";
-import { z } from "zod";
+import { expect, it } from 'vitest';
+import { z } from 'zod';
 
 const Form = z.object({
   name: z.string(),
   //             ^ 🕵️‍♂️
-  phoneNumber: z.string().optional(),
-  //                    ^ 🕵️‍♂️
-  email: z.string(),
+  phoneNumber: z
+    .string()
+    // .refine(value => value.length >= 5, {
+    //   message: 'String must contain at least 5 character(s)',
+    // })
+    // .refine(value => value.length <= 20, {
+    //   message: 'String must contain at most 20 character(s)',
+    // })
+
+    // lol
+    .min(5)
+    .max(20)
+    .optional(),
+  email: z.string().email(),
+  // omg so good
+  // .refine(value => /@/g.test(value), { message: 'Invalid email' }),
   //              ^ 🕵️‍♂️
-  website: z.string().optional(),
+  website: z
+    .string()
+    .url()
+    // .refine(value => /^https:\/\//.test(value), {
+    //   message: 'Invalid url',
+    // })
+    .optional(),
   //                ^ 🕵️‍♂️
 });
 
@@ -22,51 +41,51 @@ export const validateFormInput = (values: unknown) => {
 
 // TESTS
 
-it("Should fail if you pass a phone number with too few characters", async () => {
+it('Should fail if you pass a phone number with too few characters', async () => {
   expect(() =>
     validateFormInput({
-      name: "Matt",
-      email: "matt@example.com",
-      phoneNumber: "1",
+      name: 'Matt',
+      email: 'matt@example.com',
+      phoneNumber: '1111',
     }),
-  ).toThrowError("String must contain at least 5 character(s)");
+  ).toThrowError('String must contain at least 5 character(s)');
 });
 
-it("Should fail if you pass a phone number with too many characters", async () => {
+it('Should fail if you pass a phone number with too many characters', async () => {
   expect(() =>
     validateFormInput({
-      name: "Matt",
-      email: "matt@example.com",
-      phoneNumber: "1238712387612387612837612873612387162387",
+      name: 'Matt',
+      email: 'matt@example.com',
+      phoneNumber: '1238712387612387612837612873612387162387',
     }),
-  ).toThrowError("String must contain at most 20 character(s)");
+  ).toThrowError('String must contain at most 20 character(s)');
 });
 
-it("Should throw when you pass an invalid email", async () => {
+it('Should throw when you pass an invalid email', async () => {
   expect(() =>
     validateFormInput({
-      name: "Matt",
-      email: "matt",
+      name: 'Matt',
+      email: 'matt',
     }),
-  ).toThrowError("Invalid email");
+  ).toThrowError('Invalid email');
 });
 
-it("Should throw when you pass an invalid website URL", async () => {
+it('Should throw when you pass an invalid website URL', async () => {
   expect(() =>
     validateFormInput({
-      name: "Matt",
-      email: "matt@example.com",
-      website: "/",
+      name: 'Matt',
+      email: 'matt@example.com',
+      website: '/',
     }),
-  ).toThrowError("Invalid url");
+  ).toThrowError('Invalid url');
 });
 
-it("Should pass when you pass a valid website URL", async () => {
+it('Should pass when you pass a valid website URL', async () => {
   expect(() =>
     validateFormInput({
-      name: "Matt",
-      email: "matt@example.com",
-      website: "https://mattpocock.com",
+      name: 'Matt',
+      email: 'matt@example.com',
+      website: 'https://mattpocock.com',
     }),
   ).not.toThrowError();
 });

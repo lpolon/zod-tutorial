@@ -1,11 +1,11 @@
 // CODE
 
-import { expect, it } from "vitest";
-import { z } from "zod";
+import { expect, it } from 'vitest';
+import { z } from 'zod';
 
 // HINT - use me!
 const doesStarWarsPersonExist = async (id: string) => {
-  const data = await fetch("https://swapi.dev/api/people/" + id).then((res) =>
+  const data = await fetch('https://swapi.dev/api/people/' + id).then(res =>
     res.json(),
   );
 
@@ -13,8 +13,7 @@ const doesStarWarsPersonExist = async (id: string) => {
 };
 
 const Form = z.object({
-  id: z.string(),
-  //           ^ 🕵️‍♂️
+  id: z.string().refine(doesStarWarsPersonExist, { message: 'Not found' }),
 });
 
 export const validateFormInput = async (values: unknown) => {
@@ -25,18 +24,18 @@ export const validateFormInput = async (values: unknown) => {
 
 // TESTS
 
-it("Should fail if the star wars person does not exist", async () => {
+it('Should fail if the star wars person does not exist', async () => {
   await expect(
     validateFormInput({
-      id: "123123123123123123",
+      id: '123123123123123123',
     }),
-  ).rejects.toThrow("Not found");
+  ).rejects.toThrow('Not found');
 });
 
-it("Should succeed if the star wars person does exist", async () => {
+it('Should succeed if the star wars person does exist', async () => {
   expect(
     await validateFormInput({
-      id: "1",
+      id: '1',
     }),
-  ).toEqual({ id: "1" });
+  ).toEqual({ id: '1' });
 });

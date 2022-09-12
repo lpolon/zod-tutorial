@@ -1,11 +1,19 @@
 // CODE
 
-import { expect, it } from "vitest";
-import { z } from "zod";
+import { expect, it } from 'vitest';
+import { z } from 'zod';
 
-const StarWarsPerson = z.object({
-  name: z.string(),
-});
+// wow.
+const StarWarsPerson = z
+  .object({
+    name: z.string(),
+  })
+  .transform(value => {
+    return {
+      ...value,
+      nameAsArray: value.name.split(' '),
+    };
+  });
 //^ 🕵️‍♂️
 
 const StarWarsPeopleResults = z.object({
@@ -13,7 +21,7 @@ const StarWarsPeopleResults = z.object({
 });
 
 export const fetchStarWarsPeople = async () => {
-  const data = await fetch("https://swapi.dev/api/people/").then((res) =>
+  const data = await fetch('https://swapi.dev/api/people/').then(res =>
     res.json(),
   );
 
@@ -24,9 +32,10 @@ export const fetchStarWarsPeople = async () => {
 
 // TESTS
 
-it("Should resolve the name and nameAsArray", async () => {
-  expect((await fetchStarWarsPeople())[0]).toEqual({
-    name: "Luke Skywalker",
-    nameAsArray: ["Luke", "Skywalker"],
+it('Should resolve the name and nameAsArray', async () => {
+  const result = await fetchStarWarsPeople();
+  expect(result[0]).toEqual({
+    name: 'Luke Skywalker',
+    nameAsArray: ['Luke', 'Skywalker'],
   });
 });

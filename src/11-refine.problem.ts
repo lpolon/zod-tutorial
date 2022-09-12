@@ -1,12 +1,17 @@
 // CODE
 
-import { expect, it } from "vitest";
-import { z } from "zod";
+import { expect, it } from 'vitest';
+import { z } from 'zod';
 
-const Form = z.object({
-  password: z.string(),
-  confirmPassword: z.string(),
-});
+const Form = z
+  .object({
+    password: z.string(),
+    confirmPassword: z.string(),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 //^ 🕵️‍♂️
 
 export const validateFormInput = (values: unknown) => {
@@ -17,11 +22,11 @@ export const validateFormInput = (values: unknown) => {
 
 // TESTS
 
-it("Should error if the passwords are not the same", () => {
+it('Should error if the passwords are not the same', () => {
   expect(() =>
     validateFormInput({
-      password: "password",
-      confirmPassword: "password1",
+      password: 'password',
+      confirmPassword: 'password1',
     }),
   ).toThrowError("Passwords don't match");
 });

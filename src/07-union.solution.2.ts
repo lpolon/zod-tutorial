@@ -8,6 +8,8 @@ const Form = z.object({
   privacyLevel: z.enum(["private", "public"]),
 });
 
+type Lala = z.infer<typeof Form>['privacyLevel']
+
 export const validateFormInput = (values: unknown) => {
   const parsedData = Form.parse(values);
 
